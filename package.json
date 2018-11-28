@@ -1,0 +1,17 @@
+{
+  "name": "python-editor",
+  "version": "1.0.0",
+  "description": "Web Component to Write and Run Python Simple Program",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "polymer build",
+    "start": "polymer serve"
+  },
+  "author": "qlurkin@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "@polymer/lit-element": "^0.6.3",
+    "@webcomponents/webcomponentsjs": "^2.2.0"
+  }
+}

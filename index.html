@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Use Python Editor</title>
+    <script type="module" src="/src/python-editor.js"></script>
+</head>
+<body>
+    <h1>&lt;python-editor&gt;</h1>
+    <python-editor></python-editor>
+    <script src="/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+    <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+    <script src="/lib/brython.js"></script>
+    <script src="/lib/brython_stdlib.js"></script>
+    <script src="/lib/codemirror.js"></script>
+    <script src="/lib/python.js"></script>
+    <script src="/src/python-exec.js"></script>
+    <script>
+        pythonExec.run('print("Hello Promise Python")').then(out => {alert(out)})
+    </script>
+</body>
+</html>

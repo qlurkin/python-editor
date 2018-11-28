@@ -1,0 +1,19 @@
+{
+    "npm": true,
+    "moduleResolution": "node",
+    "entrypoint": "index.html",
+    "shell": "src/python-editor.js",
+    "extraDependencies": [
+      "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
+      "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
+      "lib/brython.js",
+      "lib/brython_stdlib.js"
+    ],
+    "builds": [{
+      "name": "mybuild",
+      "bundle": true,
+      "js": {
+        "minify": true
+      }
+    }]
+  }
