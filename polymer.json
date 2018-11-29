@@ -14,7 +14,7 @@
       "lib/python.js"
     ],
     "builds": [{
-      "name": "mybuild",
+      "name": "tmp",
       "bundle": true,
       "js": {
         "minify": true

@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "polymer build",
+    "build": "polymer build & rollup -c & gulp",
     "start": "polymer serve"
   },
   "author": "qlurkin@gmail.com",
@@ -13,5 +13,13 @@
   "dependencies": {
     "@polymer/lit-element": "^0.6.3",
     "@webcomponents/webcomponentsjs": "^2.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "rollup": "^0.67.3",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-node-resolve": "^3.4.0"
   }
 }

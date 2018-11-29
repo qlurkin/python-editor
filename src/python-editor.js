@@ -1,11 +1,24 @@
 import { LitElement, html } from '@polymer/lit-element';
 
-export default class PythonEditor extends LitElement {
+function normalizeWhiteSpace(str) {
+    let lines = str.split("\n")
+    for(var i=0; i<lines.length; i++) {
+        var indent = lines[i].search(/\S/)
+        if(indent > 0) break
+    }
+    lines = lines.slice(i)
+    return lines.map(function (line) {
+        return line.slice(indent)
+    }).join("\n").trim()
+}
+
+class PythonEditor extends LitElement {
 
     constructor() {
         super()
+        const initialContent = normalizeWhiteSpace(this.innerHTML)
         this.editors = []
-        this._addEditor('Réponse', '', 'python', false)
+        this._addEditor('Réponse', initialContent, 'python', false)
         this.activeEditor = 'Réponse'
         this.newFileDialogShown = false
         this.output = ''
@@ -163,7 +176,7 @@ export default class PythonEditor extends LitElement {
             fs[title] = content
         })
 
-        pythonExec.run(this.getEditor('Réponse').editor.getValue(), fs).then((out) => {
+        pythonExec.run(this.value, fs).then((out) => {
             this.output = out
 
             Object.keys(fs).map((title) => {
@@ -179,6 +192,15 @@ export default class PythonEditor extends LitElement {
 
             this.requestUpdate()
         })
+    }
+
+    get value() {
+        return this.getEditor('Réponse').editor.getValue()
+    }
+
+    set value(src) {
+        this.getEditor('Réponse').editor.setValue(src)
+        this.requestUpdate()
     }
 }
 
