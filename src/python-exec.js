@@ -9,10 +9,10 @@ window.pythonExec.ready = new Promise((resolve, reject) => {
     }
 })
 
-window.pythonExec.run = src => {
+window.pythonExec.run = (src, fs) => {
     return new Promise((resolve, reject) => {
         window.pythonExec.ready.then(() => {
-            resolve(window.pythonExec._run(src))
+            resolve(window.pythonExec._run(src, fs))
         })
     })
 }

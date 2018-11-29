@@ -8,6 +8,7 @@ export default class PythonEditor extends LitElement {
         this._addEditor('Réponse', '', 'python', false)
         this.activeEditor = 'Réponse'
         this.newFileDialogShown = false
+        this.output = ''
     }
     
     render() {
@@ -45,7 +46,7 @@ export default class PythonEditor extends LitElement {
                         <div class='actions'></div>
                     </header>
                     <div class='content'>
-                        <pre id="console" class='console tab-content active'></pre>
+                        <pre id="console" class='console tab-content active'>${this.output}</pre>
                     </div>
                 </div>
                 <div id="overlay" class="${this.newFileDialogShown ? 'show' : ''}">
@@ -69,6 +70,7 @@ export default class PythonEditor extends LitElement {
         this._addEditor(title, '', 'plain', true)
         this.newFileDialogShown = false
         input.value = ""
+        this.activeEditor = title
         this.requestUpdate()
         event.preventDefault()
     }
@@ -153,8 +155,29 @@ export default class PythonEditor extends LitElement {
     }
 
     run() {
-        pythonExec.run(this.getEditor('Réponse').editor.getValue()).then((out) => {
-            this.shadowRoot.getElementById('console').innerText = out
+        const fs = {}
+
+        this.editors.map((editor) => {
+            const title = editor.title
+            const content = editor.editor.getValue()
+            fs[title] = content
+        })
+
+        pythonExec.run(this.getEditor('Réponse').editor.getValue(), fs).then((out) => {
+            this.output = out
+
+            Object.keys(fs).map((title) => {
+                const editor = this.getEditor(title)
+
+                if(editor === undefined) {
+                    this._addEditor(title, fs[title], 'plain', true)
+                }
+                else {
+                    editor.editor.setValue(fs[title])
+                }
+            })
+
+            this.requestUpdate()
         })
     }
 }
