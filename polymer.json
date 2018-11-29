@@ -7,7 +7,11 @@
       "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
       "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
       "lib/brython.js",
-      "lib/brython_stdlib.js"
+      "lib/brython_stdlib.js",
+      "lib/codemirror.js",
+      "lib/codemirror.css",
+      "lib/cobalt.css",
+      "lib/python.js"
     ],
     "builds": [{
       "name": "mybuild",
