@@ -9,8 +9,9 @@
       "lib/brython.js",
       "lib/brython_stdlib.js",
       "lib/codemirror.js",
-      "lib/codemirror.css",
-      "lib/cobalt.css",
+      "css/codemirror.css",
+      "css/cobalt.css",
+      "css/editor.css",
       "lib/python.js"
     ],
     "builds": [{

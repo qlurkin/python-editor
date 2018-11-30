@@ -16,19 +16,25 @@ class PythonEditor extends LitElement {
 
     constructor() {
         super()
-        const initialContent = normalizeWhiteSpace(this.innerHTML)
+        
         this.editors = []
-        this._addEditor('Réponse', initialContent, 'python', false)
-        this.activeEditor = 'Réponse'
+        this.activeEditor = undefined
         this.newFileDialogShown = false
         this.output = ''
+
+        setTimeout(() => {
+            const initialContent = normalizeWhiteSpace(this.innerHTML)
+            this._addEditor('Réponse', initialContent, 'python', false)
+            this.activeEditor = 'Réponse'
+            this.requestUpdate()
+        }, 500)
     }
     
     render() {
         return html`
-            <link rel="stylesheet" href="/lib/codemirror.css"/>
-            <link rel="stylesheet" href="/lib/cobalt.css"/>
-            <link rel='stylesheet' href='/src/editor.css'/>
+            <link rel="stylesheet" href="/css/codemirror.css"/>
+            <link rel="stylesheet" href="/css/cobalt.css"/>
+            <link rel='stylesheet' href='/css/editor.css'/>
             <div>
                 <div id='top'>
                     <header>
@@ -111,16 +117,18 @@ class PythonEditor extends LitElement {
     }
 
     updated() {
-        const topContent = this.shadowRoot.querySelector('#top .content')
-        const editor = this.getEditor(this.activeEditor).editor
-        const wrapper = editor.getWrapperElement()
-        topContent.innerHTML = ''
-        topContent.appendChild(wrapper)
-        editor.focus()
-        setTimeout(() => {
-            editor.refresh()
-        }, 100)
-
+        if(this.activeEditor) {
+            const topContent = this.shadowRoot.querySelector('#top .content')
+            const editor = this.getEditor(this.activeEditor).editor
+            const wrapper = editor.getWrapperElement()
+            topContent.innerHTML = ''
+            topContent.appendChild(wrapper)
+            editor.focus()
+            setTimeout(() => {
+                editor.refresh()
+            }, 100)
+        }
+        
         if(this.newFileDialogShown) {
             this.shadowRoot.querySelector('input').focus()
         }

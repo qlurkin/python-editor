@@ -21,7 +21,7 @@ window.addEventListener('load', () => {
     const body = document.querySelector('body')
     const script = document.createElement('script')
     script.type = 'text/python'
-    script.src = '/src/python-exec.py'
+    script.src = '/py/python-exec.py'
     body.appendChild(script)
     brython()
 })
