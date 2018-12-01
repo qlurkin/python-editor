@@ -17,11 +17,10 @@ window.pythonExec.run = (src, fs) => {
     })
 }
 
-window.addEventListener('load', () => {
-    const body = document.querySelector('body')
-    const script = document.createElement('script')
-    script.type = 'text/python'
-    script.src = '/py/python-exec.py'
-    body.appendChild(script)
-    brython()
-})
+
+const body = document.querySelector('body')
+const script = document.createElement('script')
+script.type = 'text/python'
+script.src = '/comp/python-editor/python-exec.py'
+body.appendChild(script)
+brython()

@@ -5,8 +5,8 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "polymer build & rollup -c & gulp",
-    "start": "polymer serve"
+    "build": "rollup -c",
+    "start": "serve ."
   },
   "author": "qlurkin@gmail.com",
   "license": "MIT",

@@ -1,5 +1,17 @@
 import { LitElement, html } from '@polymer/lit-element';
 
+function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        const head = document.getElementsByTagName('head')[0]
+        const script = document.createElement('script')
+        script.addEventListener('load', () => {
+            resolve()
+        })
+        head.appendChild(script)
+        script.src = url
+    })
+}
+
 function normalizeWhiteSpace(str) {
     let lines = str.split("\n")
     for(var i=0; i<lines.length; i++) {
@@ -32,9 +44,9 @@ class PythonEditor extends LitElement {
     
     render() {
         return html`
-            <link rel="stylesheet" href="/css/codemirror.css"/>
-            <link rel="stylesheet" href="/css/cobalt.css"/>
-            <link rel='stylesheet' href='/css/editor.css'/>
+            <link rel='stylesheet' href='/comp/python-editor/css/codemirror.css'/>
+            <link rel='stylesheet' href='/comp/python-editor/css/cobalt.css'/>
+            <link rel='stylesheet' href='/comp/python-editor/css/editor.css'/>
             <div>
                 <div id='top'>
                     <header>
@@ -212,4 +224,12 @@ class PythonEditor extends LitElement {
     }
 }
 
-customElements.define('python-editor', PythonEditor);
+document.addEventListener("DOMContentLoaded", (event) => {
+    Promise.all([
+        loadScript('/comp/python-editor/lib/brython.js')
+            .then(() => loadScript('/comp/python-editor/lib/brython_stdlib.js'))
+            .then(() => loadScript('/comp/python-editor/python-exec.js')),
+        loadScript('/comp/python-editor/lib/codemirror.js')
+            .then(() => loadScript('/comp/python-editor/lib/python.js')),
+    ]).then(() => { customElements.define('python-editor', PythonEditor)})
+})

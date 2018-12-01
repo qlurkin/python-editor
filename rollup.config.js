@@ -4,8 +4,8 @@ import babel from 'rollup-plugin-babel';
 module.exports = {
     input: 'src/python-editor.js',
     output: {
-        file: 'build/tmp/python-editor.js',
-        format: 'iife'
+        file: 'comp/python-editor/python-editor.js',
+        format: 'esm'
     },
     plugins: [ resolve() ]
 }
