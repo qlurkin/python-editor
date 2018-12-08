@@ -1820,16 +1820,26 @@ class PythonEditor extends LitElement {
     constructor() {
         super();
         
+        this.onReady = new Promise((resolve) => {
+            this._ready = () => {
+                resolve();
+                this._ready = undefined;
+            };
+        });
         this.editors = [];
         this.activeEditor = undefined;
         this.newFileDialogShown = false;
         this.output = '';
 
+
         setTimeout(() => {
             const initialContent = normalizeWhiteSpace(this.innerHTML);
-            this._addEditor('Réponse', initialContent, 'python', false);
-            this.activeEditor = 'Réponse';
-            this.requestUpdate();
+            this._addEditor('Réponse', initialContent, 'python', false)
+            .then(() => {
+                this.activeEditor = 'Réponse';
+                this.requestUpdate();
+                this._ready();
+            });
         }, 500);
     }
     
@@ -1844,9 +1854,9 @@ class PythonEditor extends LitElement {
                         <nav>
                             ${this.editors.map(editor => html`
                                 <div class="tab ${editor.title === this.activeEditor ? 'active' : ''}">
-                                    <button data-target="${editor.title}" @click="${this.activeTab}">${editor.title}</button>
+                                    <button data-target="${editor.title}" @click="${this._tabFocus}">${editor.title}</button>
                                     ${editor.removable ?
-                                        html`<button data-target="${editor.title}" @click="${this.removeEditor}">&times;</button>` :
+                                        html`<button data-target="${editor.title}" @click="${this._deleteFile}">&times;</button>` :
                                         html`` }
                                 </div>
                             `)}
@@ -1872,7 +1882,7 @@ class PythonEditor extends LitElement {
                     </div>
                 </div>
                 <div id="overlay" class="${this.newFileDialogShown ? 'show' : ''}">
-                    <form @submit="${this.addEditor}">
+                    <form @submit="${this._newFile}">
                         <input type="text" placeholder="filename"/>
                         <button type="submit">Ok</button>
                     </form>
@@ -1886,7 +1896,7 @@ class PythonEditor extends LitElement {
         this.requestUpdate();
     }
 
-    addEditor(event) {
+    _newFile(event) {
         const input = this.shadowRoot.querySelector('input');
         const title = input.value;
         this._addEditor(title, '', 'plain', true);
@@ -1897,19 +1907,19 @@ class PythonEditor extends LitElement {
         event.preventDefault();
     }
 
-    removeEditor(event) {
+    _deleteFile(event) {
         const title = event.target.dataset.target;
         this._removeEditor(title);
     }
 
     _removeEditor(title) {
-        const editor = this.getEditor(title);
+        const editor = this._getEditor(title);
         const index = this.editors.indexOf(editor);
         this.editors.splice(index, 1);
         this.requestUpdate();
     }
 
-    activeTab(event) {
+    _tabFocus(event) {
         const title = event.target.dataset.target;
         this._activeTab(title);
     }
@@ -1922,7 +1932,7 @@ class PythonEditor extends LitElement {
     updated() {
         if(this.activeEditor) {
             const topContent = this.shadowRoot.querySelector('#top .content');
-            const editor = this.getEditor(this.activeEditor).editor;
+            const editor = this._getEditor(this.activeEditor).editor;
             const wrapper = editor.getWrapperElement();
             topContent.innerHTML = '';
             topContent.appendChild(wrapper);
@@ -1937,11 +1947,11 @@ class PythonEditor extends LitElement {
         }
     }
 
-    titleExists(title) {
+    _titleExists(title) {
         return !this.editors.every(elem => elem.title != title)
     }
 
-    getEditor(title) {
+    _getEditor(title) {
         return this.editors.reduce((one, editor) => {
             if(editor.title == title) {
                 one = editor;
@@ -1950,8 +1960,10 @@ class PythonEditor extends LitElement {
         }, undefined)
     }
 
-    _addEditor(title, content, mode, removable) {
-        if(this.titleExists(title)) {
+    async _addEditor(title, content, mode, removable) {
+        await depsReady;
+
+        if(this._titleExists(title)) {
             console.log('Tab title already used');
             return
         }
@@ -1978,7 +1990,8 @@ class PythonEditor extends LitElement {
         });
     }
 
-    run() {
+    async run() {
+        await this.onReady;
         const fs = {};
 
         this.editors.map((editor) => {
@@ -1991,7 +2004,7 @@ class PythonEditor extends LitElement {
             this.output = out;
 
             Object.keys(fs).map((title) => {
-                const editor = this.getEditor(title);
+                const editor = this._getEditor(title);
 
                 if(editor === undefined) {
                     this._addEditor(title, fs[title], 'plain', true);
@@ -2006,21 +2019,31 @@ class PythonEditor extends LitElement {
     }
 
     get value() {
-        return this.getEditor('Réponse').editor.getValue()
+        if(this._ready === undefined) {
+            return this._getEditor('Réponse').editor.getValue()
+        }
+        return this.innerText
     }
 
     set value(src) {
-        this.getEditor('Réponse').editor.setValue(src);
-        this.requestUpdate();
+        this.onReady.then(() => {
+            this._getEditor('Réponse').editor.setValue(src);
+            this.requestUpdate();
+        });
     }
 }
-
-document.addEventListener("DOMContentLoaded", (event) => {
-    Promise.all([
-        loadScript('/comp/python-editor/lib/brython.js')
-            .then(() => loadScript('/comp/python-editor/lib/brython_stdlib.js'))
-            .then(() => loadScript('/comp/python-editor/python-exec.js')),
-        loadScript('/comp/python-editor/lib/codemirror.js')
-            .then(() => loadScript('/comp/python-editor/lib/python.js')),
-    ]).then(() => { customElements.define('python-editor', PythonEditor);});
+const depsReady = new Promise((resolve) => {
+    document.addEventListener("DOMContentLoaded", (event) => {
+        Promise.all([
+            loadScript('/comp/python-editor/lib/brython.js')
+                .then(() => loadScript('/comp/python-editor/lib/brython_stdlib.js'))
+                .then(() => loadScript('/comp/python-editor/python-exec.js')),
+            loadScript('/comp/python-editor/lib/codemirror.js')
+                .then(() => loadScript('/comp/python-editor/lib/python.js')),
+        ]).then(() => {
+            resolve();
+        });
+    });
 });
+
+customElements.define('python-editor', PythonEditor);
