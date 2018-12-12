@@ -1936,7 +1936,7 @@ class PythonEditor extends LitElement {
             const wrapper = editor.getWrapperElement();
             topContent.innerHTML = '';
             topContent.appendChild(wrapper);
-            editor.focus();
+            //editor.focus()
             setTimeout(() => {
                 editor.refresh();
             }, 100);
