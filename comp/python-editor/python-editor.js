@@ -1916,6 +1916,9 @@ class PythonEditor extends LitElement {
         const editor = this._getEditor(title);
         const index = this.editors.indexOf(editor);
         this.editors.splice(index, 1);
+        if(this.activeEditor === title) {
+            this.activeEditor = "Réponse";
+        }
         this.requestUpdate();
     }
 
