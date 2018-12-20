@@ -206,6 +206,8 @@ class PythonEditor extends LitElement {
         await this.onReady
         const fs = {}
 
+        this.dispatchEvent(new Event('run'))
+
         this.editors.map((editor) => {
             const title = editor.title
             const content = editor.editor.getValue()
