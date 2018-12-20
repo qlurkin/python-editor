@@ -1997,7 +1997,7 @@ class PythonEditor extends LitElement {
         await this.onReady;
         const fs = {};
 
-        this.dispatchEvent(new Event('run'));
+        this.dispatchEvent(new Event('before-run', {bubbles: true, composed: true}));
 
         this.editors.map((editor) => {
             const title = editor.title;
