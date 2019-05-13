@@ -20,7 +20,7 @@ const setupWorker = () => {
 	return new Promise((resolve) => {
 		console.log("Start Python Thread")
 		emit("init")
-		pyodideWorker = new Worker('./webworker.js')
+		pyodideWorker = new Worker('/comp/python-editor/webworker.js')
 		pyodideWorker.onmessage = (e) => {
 			if (e.data.stdout) {
 				resolve()
@@ -40,6 +40,8 @@ export const run = (src, fs) => {
 	if(fs === undefined) {
 		fs = {}
 	}
+
+	console.log(fs)
 
 	const promise = new Promise((resolve, reject) => {
 		current.finally(() => {
@@ -61,9 +63,15 @@ export const run = (src, fs) => {
 			pyodideWorker.onmessage = (e) => {
 				clearTimeout(timer)
 				const {stdout, fs, error} = e.data
-				if (stdout) {
+				if (stdout !== undefined) {
+					console.group("Python stdout")
+					console.log(stdout)
+					console.groupEnd()
+					console.group("Python File System")
+					console.log(fs)
+					console.groupEnd()
 					resolve({stdout, fs})
-				} else if (error) {
+				} else if (error !== undefined) {
 					reject(error)
 				}
 			}
@@ -74,13 +82,16 @@ export const run = (src, fs) => {
 	
 			const data = {
 				src,
-				fs,
+				fs: JSON.stringify(fs),
 				python: `
 					import sys
+					import json
 					from js import src, fs
 
+					fs = json.loads(fs)
+
 					class FileDescriptor:
-						def __init__(self, filename, fs, mode = 'r'):
+						def __init__(self, filename, fs, mode='r'):
 							self._fs = fs
 							self._filename = filename
 							if len(mode) == 1:
@@ -89,7 +100,7 @@ export const run = (src, fs) => {
 							self._access = 'read' if mode[0] == 'r' else 'write'
 							self._content = ""
 							if mode[0] == 'r' or mode[0] == 'a':
-								if filename not in fs:
+								if filename not in fs.keys():
 									raise FileNotFoundError()
 									
 								self._content = fs[filename]

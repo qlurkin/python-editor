@@ -1,4 +1,4 @@
-self.languagePluginUrl = 'http://localhost:5000/pyodide/'
+self.languagePluginUrl = 'pyodide/'
 importScripts('./pyodide/pyodide.js')
 
 var onmessage = function(e) {
