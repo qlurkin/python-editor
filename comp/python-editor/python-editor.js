@@ -1,5 +1,5 @@
 //import { LitElement, html } from '@polymer/lit-element'
-import {html, render} from '/modules/lit-html/lit-html.js'
+import {html, render} from '/node_modules/lit-html/lit-html.js'
 import { run, subscribe } from './run-py.js'
 import { CodeMirror } from './loadCodeMirror.js'
 
