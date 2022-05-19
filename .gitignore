@@ -3,3 +3,5 @@ modules
 .cache
 build
 pyodide
+.DS_Store
+.vscode
